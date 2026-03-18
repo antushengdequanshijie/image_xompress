@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>图片压缩工具</title>
+</head>
+<body>
+
+<h2>图片压缩工具</h2>
+<input type="file" id="upload" accept="image/*">
+<br><br>
+<label>压缩质量 (0~1):</label>
+<input type="number" id="quality" value="0.7" step="0.1" min="0" max="1">
+<br><br>
+
+<button onclick="compressImage()">压缩</button>
+
+<br><br>
+<img id="preview" style="max-width:300px;">
+<br>
+<a id="download" download="compressed.jpg">下载压缩图</a>
+
+<script>
+function compressImage() {
+  const file = document.getElementById('upload').files[0];
+  const quality = parseFloat(document.getElementById('quality').value);
+
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+
+  reader.onload = function(e) {
+    const img = new Image();
+    img.src = e.target.result;
+
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      ctx.drawImage(img, 0, 0);
+
+      const compressedData = canvas.toDataURL('image/jpeg', quality);
+
+      document.getElementById('preview').src = compressedData;
+      document.getElementById('download').href = compressedData;
+    };
+  };
+}
+</script>
+
+</body>
+</html>
